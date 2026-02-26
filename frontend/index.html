@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>PRGI Title Validator</title>
+    <style>
+        body { font-family: sans-serif; display: flex; justify-content: center; padding: 50px; background: #f4f7f6; }
+        .card { background: white; padding: 2rem; border-radius: 10px; shadow: 0 4px 6px rgba(0,0,0,0.1); width: 400px; }
+        input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box; }
+        button { width: 100%; padding: 10px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        .result { margin-top: 20px; padding: 15px; border-radius: 5px; display: none; }
+        .Accepted { background: #d4edda; color: #155724; }
+        .Rejected { background: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2>Title Verifier</h2>
+        <input type="text" id="title" placeholder="Enter title (e.g. Namascar)">
+        <button onclick="check()">Check Compliance</button>
+
+        <div id="resBox" class="result">
+            <b id="status"></b><br>
+            Probability: <span id="prob"></span>%<br>
+            <small id="reason"></small>
+        </div>
+    </div>
+
+    <script>
+        async function check() {
+            const title = document.getElementById('title').value;
+            const resBox = document.getElementById('resBox');
+            
+            try {
+                // Ensure this URL matches your Uvicorn terminal output!
+                const response = await fetch(`http://127.0.0.1:8000/verify?title=${title}`);
+                const data = await response.json();
+
+                resBox.style.display = "block";
+                resBox.className = "result " + data.status;
+                document.getElementById('status').innerText = data.status;
+                document.getElementById('prob').innerText = data.probability;
+                document.getElementById('reason').innerText = data.reason;
+            } catch (err) {
+                alert("Backend not running! Start Uvicorn in the terminal.");
+            }
+        }
+    </script>
+</body>
+</html>
