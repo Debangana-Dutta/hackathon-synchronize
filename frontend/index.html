@@ -1,49 +1,100 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>PRGI Title Validator</title>
-    <style>
-        body { font-family: sans-serif; display: flex; justify-content: center; padding: 50px; background: #f4f7f6; }
-        .card { background: white; padding: 2rem; border-radius: 10px; shadow: 0 4px 6px rgba(0,0,0,0.1); width: 400px; }
-        input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box; }
-        button { width: 100%; padding: 10px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; }
-        .result { margin-top: 20px; padding: 15px; border-radius: 5px; display: none; }
-        .Accepted { background: #d4edda; color: #155724; }
-        .Rejected { background: #f8d7da; color: #721c24; }
-    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Title Similarity & Compliance Validation System</title>
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="card">
-        <h2>Title Verifier</h2>
-        <input type="text" id="title" placeholder="Enter title (e.g. Namascar)">
-        <button onclick="check()">Check Compliance</button>
+    <div class="container">
+        <!-- Header Section -->
+        <header class="header animate-fade-in">
+            <div class="logo">
+                <i class="fas fa-shield-halved"></i>
+            </div>
+            <h1>Title Similarity & Compliance Validation System</h1>
+            <p class="subtitle">Title Uniqueness & Compliance Validator</p>
+            <p class="description">Verifying newspaper title uniqueness against 160,000+ existing records using advanced phonetic, semantic, and similarity algorithms.</p>
+        </header>
 
-        <div id="resBox" class="result">
-            <b id="status"></b><br>
-            Probability: <span id="prob"></span>%<br>
-            <small id="reason"></small>
-        </div>
+        <main>
+            <!-- Input Card -->
+            <section class="card main-card animate-slide-up">
+                <div class="input-group">
+                    <label for="proposed-title">Enter Proposed Title</label>
+                    <input type="text" id="proposed-title" placeholder="e.g. The Morning Chronicle" autocomplete="off">
+                    <p id="error-message" class="error-text hidden">Please enter a valid title (no special characters except spaces/hyphens).</p>
+                </div>
+                <div class="button-group">
+                    <button id="verify-btn" class="btn btn-primary">
+                        <span id="btn-text">Verify Title</span>
+                        <div id="btn-spinner" class="spinner-small hidden"></div>
+                    </button>
+                    <button id="reset-btn" class="btn btn-secondary">Reset</button>
+                </div>
+            </section>
+
+            <!-- Loading Section -->
+            <section id="loading-section" class="loading-container hidden">
+                <div class="spinner-large"></div>
+                <p>Analyzing title similarity...</p>
+            </section>
+
+            <!-- Result Section -->
+            <section id="result-section" class="hidden">
+                <div class="result-grid">
+                    <!-- Probability & Status Card -->
+                    <div class="card result-main-card animate-fade-in">
+                        <h3>Verification Probability</h3>
+                        <div class="progress-container">
+                            <div class="circular-progress" id="circular-progress">
+                                <span class="progress-value" id="progress-value">0%</span>
+                            </div>
+                        </div>
+                        <div id="status-badge" class="badge">Approved</div>
+                        <p id="probability-desc" class="result-summary">High similarity detected with existing titles.</p>
+                    </div>
+
+                    <!-- Detailed Feedback Section -->
+                    <div class="card feedback-card animate-fade-in" style="animation-delay: 0.1s;">
+                        <h3>Detailed Compliance Check</h3>
+                        <div class="feedback-grid" id="feedback-grid">
+                            <!-- Items will be injected by JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Similar Titles Table -->
+                <div class="card table-card animate-fade-in" style="animation-delay: 0.2s;">
+                    <h3>Top 5 Similar Titles</h3>
+                    <div class="table-responsive">
+                        <table id="similar-titles-table">
+                            <thead>
+                                <tr>
+                                    <th>Existing Title</th>
+                                    <th>Similarity %</th>
+                                    <th>Risk Level</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Rows will be injected by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="footer">
+            <p>&copy; 2026 Government Media Authority. All Rights Reserved.</p>
+        </footer>
     </div>
 
-    <script>
-        async function check() {
-            const title = document.getElementById('title').value;
-            const resBox = document.getElementById('resBox');
-            
-            try {
-                // Ensure this URL matches your Uvicorn terminal output!
-                const response = await fetch(`http://127.0.0.1:8000/verify?title=${title}`);
-                const data = await response.json();
-
-                resBox.style.display = "block";
-                resBox.className = "result " + data.status;
-                document.getElementById('status').innerText = data.status;
-                document.getElementById('prob').innerText = data.probability;
-                document.getElementById('reason').innerText = data.reason;
-            } catch (err) {
-                alert("Backend not running! Start Uvicorn in the terminal.");
-            }
-        }
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
