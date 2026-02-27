@@ -3,8 +3,10 @@ from fastapi.middleware.cors import CORSMiddleware
 import jellyfish  # For Soundex/Metaphone
 from rapidfuzz import fuzz
 import sqlite3
+from database import TitleDatabase
 
 app = FastAPI()
+db = TitleDatabase()
 
 # MUST HAVE: This allows your HTML file to talk to this Python script
 app.add_middleware(
@@ -24,7 +26,10 @@ def verify(title: str):
 
     # Rule 2: Database Check (Mocking the 160k titles)
     # Using a small list for your demo
-    existing_titles = ["The Hindu", "Times of India", "Indian Express", "Namaskar"]
+    db_titles = db.get_all_titles()
+    
+    # If the database is empty, use some defaults for demo purposes
+    existing_titles = db_titles if db_titles else ["The Hindu", "Times of India", "Indian Express", "Namaskar"]
     
     max_sim = 0
     match_found = ""
